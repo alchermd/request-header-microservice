@@ -1,11 +1,17 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 )
+
+type Header struct {
+	IpAddress string `json:"ipaddress"`
+}
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("Serving " + r.URL.Path)
@@ -16,6 +22,19 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func headerHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("Serving " + r.URL.Path)
+
+	h := &Header{
+		IpAddress: r.RemoteAddr,
+	}
+
+	j, err := json.Marshal(h)
+	if err != nil {
+		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	fmt.Fprintf(w, string(j))
 }
 
 func main() {
