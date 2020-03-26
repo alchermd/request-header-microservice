@@ -11,8 +11,8 @@ import (
 
 type Header struct {
 	IpAddress string `json:"ipaddress"`
-	Language string `json:"language"`
-	Software string `json:"software"`
+	Language  string `json:"language"`
+	Software  string `json:"software"`
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,8 +27,8 @@ func headerHandler(w http.ResponseWriter, r *http.Request) {
 
 	h := &Header{
 		IpAddress: getUserIP(r),
-		Language: r.Header.Get("Accept-Language"),
-		Software: r.Header.Get("User-Agent"),
+		Language:  r.Header.Get("Accept-Language"),
+		Software:  r.Header.Get("User-Agent"),
 	}
 
 	j, err := json.Marshal(h)
@@ -37,19 +37,20 @@ func headerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Add("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Content-Type", "application/json")
 	fmt.Fprintf(w, string(j))
 }
 
 func getUserIP(r *http.Request) string {
-    IPAddress := r.Header.Get("X-Real-Ip")
-    if IPAddress == "" {
-        IPAddress = r.Header.Get("X-Forwarded-For")
-    }
-    if IPAddress == "" {
-        IPAddress = r.RemoteAddr
-    }
-    return IPAddress
+	IPAddress := r.Header.Get("X-Real-Ip")
+	if IPAddress == "" {
+		IPAddress = r.Header.Get("X-Forwarded-For")
+	}
+	if IPAddress == "" {
+		IPAddress = r.RemoteAddr
+	}
+	return IPAddress
 }
 
 func main() {
