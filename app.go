@@ -11,6 +11,7 @@ import (
 
 type Header struct {
 	IpAddress string `json:"ipaddress"`
+	Language string `json:"language"`
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,6 +26,7 @@ func headerHandler(w http.ResponseWriter, r *http.Request) {
 
 	h := &Header{
 		IpAddress: getUserIP(r),
+		Language: r.Header.Get("Accept-Language"),
 	}
 
 	j, err := json.Marshal(h)
